@@ -1,0 +1,62 @@
+#!/usr/bin/python3
+import subprocess
+import whisper
+import os
+from pydub import AudioSegment
+import sys
+import platform
+
+# Set global variables
+TMP_PATH = "mojiokoshi_tmp.mp3"
+class WhisperModel():
+	LARGE = "large"
+	MEDIUM = "medium"
+	SMALL = "small"
+	BASE = "base"
+	TINY = "tiny"
+selected_model = WhisperModel.LARGE
+
+def print_green(text):
+	print(f"\033[92m{text}\033[0m")
+def print_blue(text):
+	print(f"\033[94m{text}\033[0m")
+def input_blue(text):
+	return input(f"\033[94m{text}\033[0m")
+def get_target_path():
+	args = sys.argv
+	if len(args) >= 2:
+		path = args[1]
+	else:
+		path = input_blue("音声ファイルのパスを入力し、Enterを押してください: \n")
+	if platform.system() == "Darwin":
+		path = path.replace("\\", "")
+		path = path.strip()
+	if not os.path.exists(path):
+		raise FileNotFoundError("\033[91m音声ファイルが見つかりませんでした\03[0m")
+	return path
+def preprocess_audio(tgt_path):
+	global TMP_PATH
+	if not tgt_path.endswith('.mp3'):
+		extention = tgt_path.split('.')[-1]
+		sound = AudioSegment.from_file(tgt_path, format=extention)
+		sound.export(TMP_PATH, format="mp3")
+		tgt_path = TMP_PATH
+	return tgt_path
+
+# Load the model
+model = whisper.load_model(selected_model)
+# Load the audio
+input_path = get_target_path()
+tgt_path = preprocess_audio(input_path)
+# Transcribe
+print_blue(f"{input_path}を文字起こし中...")
+result = model.transcribe(tgt_path)
+if os.path.exists(TMP_PATH):
+	os.remove(TMP_PATH)
+# Output the result
+output_path = "output.txt"
+with open(output_path, 'w') as f:
+	f.write(result["text"])
+print_green(f"結果が{output_path}に保存されました")
+if platform.system() == "Darwin":
+	subprocess.call(["open", output_path])
