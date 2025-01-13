@@ -1,0 +1,36 @@
+name: Install Libraries
+
+on: [push, pull_request]
+
+jobs:
+  install-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          sudo apt install -y ffmpeg
+          pip install -r requirements.txt
+
+  install-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          choco install python
+          choco install ffmpeg
+          pip install -r requirements.txt
+
+  install-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install python
+          brew install ffmpeg
+          pip install -r requirements.txt

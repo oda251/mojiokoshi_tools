@@ -2,6 +2,7 @@
 import subprocess
 import whisper
 import os
+import flet
 from pydub import AudioSegment
 import sys
 import platform

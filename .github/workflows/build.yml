@@ -1,0 +1,62 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev ffmpeg
+          sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+          pip install -r requirements.txt
+      - name: Build
+        run: flet build linux
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-build
+          path: app/dist/
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install flet
+        run: |
+          choco install git
+          choco install flutter
+      - name: Install dependencies
+        run: |
+          choco install python
+          choco install ffmpeg
+          choco install flutter
+          pip install -r requirements.txt
+      - name: Build
+        run: flet build windows
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-build
+          path: app/dist/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install python
+          brew install ffmpeg
+          pip install -r requirements.txt
+      - name: Build
+        run: flet build macos --arch arm64
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-build
+          path: app/dist/
