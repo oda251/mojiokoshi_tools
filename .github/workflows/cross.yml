@@ -6,6 +6,15 @@ on:
   #     - "v*"
 
 jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Create Tag"
+        run: |
+          git tag ${{ github.sha }}
+          git push origin ${{ github.sha }}
+
   create-release:
     runs-on: ubuntu-latest
     permissions:
@@ -39,7 +48,7 @@ jobs:
         with:
           python-version: 3.9
           cache: "pip"
-      - run: pip install -r requirements.txt
+      - run: pip install -r app/requirements.txt
       - run: flet pack app.py --name ${{ matrix.flet-name }}
       - name: "Linux/MacOS compress"
         if: runner.os != 'Windows'

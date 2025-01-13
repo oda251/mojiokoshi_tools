@@ -12,7 +12,7 @@ jobs:
           sudo apt update
           sudo apt install -y python3-pip
           sudo apt install -y ffmpeg
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
 
   install-windows:
     runs-on: windows-latest
@@ -22,7 +22,7 @@ jobs:
         run: |
           choco install python
           choco install ffmpeg
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
 
   install-macos:
     runs-on: macos-latest
@@ -33,4 +33,4 @@ jobs:
           brew update
           brew install python
           brew install ffmpeg
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
