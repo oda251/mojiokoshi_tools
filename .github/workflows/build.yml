@@ -6,7 +6,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo apt update
@@ -16,7 +16,7 @@ jobs:
       - name: Build
         run: flet build linux
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: linux-build
           path: app/dist/
@@ -24,7 +24,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install flet
         run: |
           choco install git
@@ -33,12 +33,11 @@ jobs:
         run: |
           choco install python
           choco install ffmpeg
-          choco install flutter
           pip install -r requirements.txt
       - name: Build
         run: flet build windows
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: windows-build
           path: app/dist/
@@ -46,7 +45,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           brew update
@@ -54,9 +53,9 @@ jobs:
           brew install ffmpeg
           pip install -r requirements.txt
       - name: Build
-        run: flet build macos --arch arm64
+        run: pyinstaller --onefile src/main.py
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: macos-build
-          path: app/dist/
+          path: dist/
